@@ -46,13 +46,18 @@ public class Player extends Actor {
     }
     
     public void timerTaskHandler() {
+        
+        //Debugging Info
         System.out.println("Position = " + getPosition());
         System.out.println("Displacement = " + displacementPosition);
         System.out.println("Environment = " + environmentPosition);
         System.out.println("Hitbox = " + getObjectBoundary());
+        
         updateVelocity();
         updateFacingDirection();
         applyVelocity();
+        
+        // Updates the player's position in the world
         setPosition(environmentPosition.x + displacementPosition.x, environmentPosition.y + displacementPosition.y);
     }
     
@@ -62,39 +67,48 @@ public class Player extends Actor {
     }
     
     private void updateVelocity() {
+        
+        // If the player's Directions list contains a certain direction, apply that direction to the velocity
         setVelocity(0, 0);
-        if (getDirections().contains(Direction.UP)) accelerate(0, -3);
-        if (getDirections().contains(Direction.DOWN)) accelerate(0, 3);
-        if (getDirections().contains(Direction.LEFT)) accelerate(-3, 0);
-        if (getDirections().contains(Direction.RIGHT)) accelerate(3, 0);
+        if (directions.contains(Direction.UP)) accelerate(0, -3);
+        if (directions.contains(Direction.DOWN)) accelerate(0, 3);
+        if (directions.contains(Direction.LEFT)) accelerate(-3, 0);
+        if (directions.contains(Direction.RIGHT)) accelerate(3, 0);
     }
     
     private void updateFacingDirection() {
+        
+        // Determines what direction the player is facing relative to its velocity
         if (getVelocity().y < 0) facing = Direction.UP;
         else if (getVelocity().y > 0) facing = Direction.DOWN;
         else {
             if (getVelocity().x < 0) facing = Direction.LEFT;
             else if (getVelocity().x > 0) facing = Direction.RIGHT;
         }
-    }
-    
-    public void draw(Graphics2D graphics) {
         
-        graphics.translate(-environmentPosition.x + Environment.DEFAULT_WINDOW_X - (WIDTH / 2), -environmentPosition.y + Environment.DEFAULT_WINDOW_Y - (HEIGHT / 2));
-        
+        // Selects image relative to which direction the player is facing
         if (facing == Direction.UP) setImage(spriteProvider.getImage(SpriteManager.PLAYER_UP));
         if (facing == Direction.DOWN) setImage(spriteProvider.getImage(SpriteManager.PLAYER_DOWN));
         if (facing == Direction.LEFT) setImage(spriteProvider.getImage(SpriteManager.PLAYER_LEFT));
         if (facing == Direction.RIGHT) setImage(spriteProvider.getImage(SpriteManager.PLAYER_RIGHT));
+    }
+    
+    public void draw(Graphics2D graphics) {
         
-//        graphics.fillRect(displacementPosition.x, displacementPosition.y, WIDTH, HEIGHT);
+        // Moves the player on the coordinates of the screen, not the world
+        graphics.translate(-environmentPosition.x + Environment.DEFAULT_WINDOW_X - (WIDTH / 2), -environmentPosition.y + Environment.DEFAULT_WINDOW_Y - (HEIGHT / 2));
         
+        // Draws the player
         graphics.drawImage(getImage(), getPosition().x, getPosition().y, WIDTH, HEIGHT, null);
         
+        // Translates images from coordinates of the player to coordinates of its drawing location
+        // Used for objects such as the player's hitbox
         graphics.translate(WIDTH / 2, HEIGHT / 2);
         
         graphics.setColor(Color.RED);
-        graphics.draw(getObjectBoundary());        
+        
+        // Outlines the hitbox of the player
+//        graphics.draw(getObjectBoundary());        
     }
     
     public void applyVelocity() {
@@ -122,10 +136,6 @@ public class Player extends Actor {
     
     public void removeDirection(Direction direction) {
         directions.remove(direction);
-    }
-    
-    public void clearDirections(Direction direction) {
-        directions.clear();
     }
     
     public Point getEnvironmentPosition() {
