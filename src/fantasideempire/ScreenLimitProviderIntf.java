@@ -7,7 +7,7 @@ package fantasideempire;
 
 /**
  *
- * @author Kyle
+ * @author Kyle van Wiltenburg
  */
 public interface ScreenLimitProviderIntf {
     

@@ -7,17 +7,17 @@ package fantasideempire;
 
 /**
  *
- * @author Kyle
+ * @author Kyle van Wiltenburg
  */
 public class PlayerScreenLimitProvider implements ScreenLimitProviderIntf{
     
     private int minX, maxX, minY, maxY;
     
-    public PlayerScreenLimitProvider(int minX, int maxX, int minY, int maxY){
-        this.minX = minX;
-        this.maxX = maxX;
-        this.minY = minY;
-        this.maxY = maxY;
+    public PlayerScreenLimitProvider(int width, int height){
+        this.minX = -width + Environment.DEFAULT_WINDOW_X;
+        this.maxX = width - Environment.DEFAULT_WINDOW_X;
+        this.minY = -height + Environment.DEFAULT_WINDOW_Y;
+        this.maxY = height - Environment.DEFAULT_WINDOW_Y;
     }
     
     @Override

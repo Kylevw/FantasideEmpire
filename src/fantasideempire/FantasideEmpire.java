@@ -13,7 +13,7 @@ import javax.swing.JFrame;
 
 /**
  *
- * @author Kyle
+ * @author Kyle van Wiltenburg
  */
 public class FantasideEmpire {
 

@@ -16,9 +16,11 @@ import java.util.ArrayList;
 
 /**
  *
- * @author Kyle
+ * @author Kyle van Wiltenburg
  */
 public class Player extends Actor {
+    
+//  <editor-fold defaultstate="collapsed" desc="Constructors">
     
     {
         facing = Direction.DOWN;
@@ -35,6 +37,16 @@ public class Player extends Actor {
     private final Point environmentPosition;
     private final Point displacementPosition;
     
+    /**
+     * Constructor, returns an instance of the BattleEntity class
+     *
+     * @param image the current sprite of the entity
+     * @param position the current position of the entity on screen
+     * @param screenLimiter inputs the minimum and maximum positions for the camera
+     * @param spriteProvider the SpriteManager for the entity
+     * 
+     */
+    
     public Player(BufferedImage image, Point position, ScreenLimitProviderIntf screenLimiter, SpriteProviderIntf spriteProvider) {
 
         super(image, position, new Velocity(0, 0));
@@ -44,6 +56,10 @@ public class Player extends Actor {
         this.screenLimiter = screenLimiter;
         this.spriteProvider = spriteProvider;
     }
+    
+//  </editor-fold>
+    
+//  <editor-fold defaultstate="collapsed" desc="Task Handler">
     
     public void timerTaskHandler() {
         
@@ -59,11 +75,6 @@ public class Player extends Actor {
         
         // Updates the player's position in the world
         setPosition(environmentPosition.x + displacementPosition.x, environmentPosition.y + displacementPosition.y);
-    }
-    
-    @Override
-    public Rectangle getObjectBoundary() {
-        return new Rectangle(getPosition().x - (WIDTH / 2), getPosition().y - (HEIGHT / 2), WIDTH, HEIGHT);
     }
     
     private void updateVelocity() {
@@ -93,6 +104,22 @@ public class Player extends Actor {
         if (facing == Direction.RIGHT) setImage(spriteProvider.getImage(SpriteManager.PLAYER_RIGHT));
     }
     
+    public void applyVelocity() {
+        
+        if (getPosition().x + getVelocity().x <= screenLimiter.getMinX() || getPosition().x + getVelocity().x >= screenLimiter.getMaxX()) displacementPosition.x += getVelocity().x;
+        else if (displacementPosition.x == 0) environmentPosition.x += getVelocity().x;
+        else displacementPosition.x = 0;
+        
+        if (getPosition().y + getVelocity().y <= screenLimiter.getMinY() || getPosition().y + getVelocity().y >= screenLimiter.getMaxY()) displacementPosition.y += getVelocity().y;
+        else if (displacementPosition.y == 0) environmentPosition.y += getVelocity().y;
+        else displacementPosition.y = 0;
+        
+    }
+    
+//  </editor-fold>
+    
+//  <editor-fold defaultstate="collapsed" desc="DrawingIntf">
+    
     public void draw(Graphics2D graphics) {
         
         // Moves the player on the coordinates of the screen, not the world
@@ -108,14 +135,16 @@ public class Player extends Actor {
         graphics.setColor(Color.RED);
         
         // Outlines the hitbox of the player
-//        graphics.draw(getObjectBoundary());        
+        graphics.draw(getObjectBoundary());        
     }
     
-    public void applyVelocity() {
-        if (displacementPosition.x == 0) environmentPosition.x += getVelocity().x;
-        if (displacementPosition.y == 0) environmentPosition.y += getVelocity().y;
-        if (environmentPosition.x < screenLimiter.getMinX() || environmentPosition.x > screenLimiter.getMaxX()) displacementPosition.x += getVelocity().x;
-        if (environmentPosition.y < screenLimiter.getMinY() || environmentPosition.y > screenLimiter.getMaxY()) displacementPosition.y += getVelocity().y;
+//  </editor-fold>
+    
+//  <editor-fold defaultstate="collapsed" desc="Properties">
+    
+    @Override
+    public Rectangle getObjectBoundary() {
+        return new Rectangle(getPosition().x - (WIDTH / 2), getPosition().y - (HEIGHT / 2), WIDTH, HEIGHT);
     }
     
     public ArrayList<Direction> getDirections() {
@@ -145,5 +174,7 @@ public class Player extends Actor {
     public Point getDisplacementPosition() {
         return displacementPosition;
     }
+    
+//  </editor-fold>
     
 }

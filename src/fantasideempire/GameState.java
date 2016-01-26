@@ -5,14 +5,10 @@
  */
 package fantasideempire;
 
-import java.awt.image.BufferedImage;
-
 /**
  *
  * @author Kyle van Wiltenburg
  */
-public interface SpriteProviderIntf {
-    
-    public BufferedImage getImage(String name);
-    
+public enum GameState {
+    START_MENU, ENVIRONMENT, ARENA, PAUSE_MENU
 }

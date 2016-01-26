@@ -7,8 +7,8 @@ package fantasideempire;
 
 /**
  *
- * @author Kyle
+ * @author Kyle van Wiltenburg
  */
 public enum Direction {
-    UP, DOWN, LEFT, RIGHT, STATIONARY
+    UP, DOWN, LEFT, RIGHT
 }

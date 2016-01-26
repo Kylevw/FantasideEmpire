@@ -5,14 +5,12 @@
  */
 package fantasideempire;
 
-import java.awt.image.BufferedImage;
-
 /**
  *
  * @author Kyle van Wiltenburg
  */
-public interface SpriteProviderIntf {
-    
-    public BufferedImage getImage(String name);
-    
+public enum Element {
+    MELEE_FRONT, MELEE_TOP, MELEE_BACK, MELEE_BOTTOM,
+    PROJECTILE_FRONT,PROJECTILE_TOP, PROJECTILE_BACK, 
+    FIRE, PARALYSIS, POISON, DARKNESS, LIGHT
 }

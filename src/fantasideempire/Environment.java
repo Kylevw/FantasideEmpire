@@ -17,11 +17,13 @@ import java.awt.image.BufferedImage;
 
 /**
  *
- * @author Kyle
+ * @author Kyle van Wiltenburg
  */
 class Environment extends environment.Environment {
     
     public Player player;
+    
+    public GameState gameState;
     
     public static final int DEFAULT_WINDOW_WIDTH = 360;
     public static final int DEFAULT_WINDOW_HEIGHT = 200;
@@ -32,16 +34,22 @@ class Environment extends environment.Environment {
 
     public Environment() {
         
+        gameState = GameState.ENVIRONMENT;
         spriteProvider = new SpriteManager();
-        
-        player = new Player((BufferedImage) spriteProvider.getImage(SpriteManager.PLAYER_DOWN), new Point(0, 0), new PlayerScreenLimitProvider(-DEFAULT_WINDOW_X, DEFAULT_WINDOW_X, -DEFAULT_WINDOW_Y, DEFAULT_WINDOW_Y), spriteProvider);
+        player = new Player((BufferedImage) spriteProvider.getImage(SpriteManager.PLAYER_DOWN), new Point(0, 0), new PlayerScreenLimitProvider(DEFAULT_WINDOW_X * 2, DEFAULT_WINDOW_Y * 2), spriteProvider);
         
     }
 
+//  <editor-fold defaultstate="collapsed" desc="Environment Initializer">
+    
     @Override
     public void initializeEnvironment() {
     }
+    
+//  </editor-fold>
 
+//  <editor-fold defaultstate="collapsed" desc="Task Handler">
+    
     @Override
     public void timerTaskHandler() {
         
@@ -49,7 +57,11 @@ class Environment extends environment.Environment {
             player.timerTaskHandler();
         }
     }
-
+    
+//  </editor-fold>
+    
+//  <editor-fold defaultstate="collapsed" desc="Key Handler">
+    
     @Override
     public void keyPressedHandler(KeyEvent e) {
         // Uses the Arrow Keys to control the player
@@ -72,11 +84,19 @@ class Environment extends environment.Environment {
             else if (e.getKeyCode() == KeyEvent.VK_RIGHT && player.getDirections().contains(Direction.RIGHT)) player.removeDirection(Direction.RIGHT);
         }
     }
-
+    
+//  </editor-fold>
+    
+//  <editor-fold defaultstate="collapsed" desc="Mouse Handler">
+    
     @Override
     public void environmentMouseClicked(MouseEvent e) {
     }
+    
+//  </editor-fold>
 
+//  <editor-fold defaultstate="collapsed" desc="DrawingIntf">
+    
     @Override
     public void paintEnvironment(Graphics g) {
         
@@ -107,5 +127,7 @@ class Environment extends environment.Environment {
         }
         
     }
+    
+//  </editor-fold>
     
 }

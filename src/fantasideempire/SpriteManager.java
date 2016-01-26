@@ -14,7 +14,7 @@ import java.util.HashMap;
 
 /**
  *
- * @author Kyle
+ * @author Kyle van Wiltenburg
  */
 public class SpriteManager implements SpriteProviderIntf {
     
