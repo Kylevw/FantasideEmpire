@@ -30,13 +30,13 @@ class Environment extends environment.Environment {
     public static final int DEFAULT_WINDOW_X = DEFAULT_WINDOW_WIDTH / 2;
     public static final int DEFAULT_WINDOW_Y = DEFAULT_WINDOW_HEIGHT / 2;
     
-    SpriteManager spriteProvider;
+    FEImageManager spriteProvider;
 
     public Environment() {
         
         gameState = GameState.ENVIRONMENT;
-        spriteProvider = new SpriteManager();
-        player = new Player((BufferedImage) spriteProvider.getImage(SpriteManager.PLAYER_DOWN), new Point(0, 0), new PlayerScreenLimitProvider(DEFAULT_WINDOW_X * 2, DEFAULT_WINDOW_Y * 2), spriteProvider);
+        spriteProvider = new FEImageManager();
+        player = new Player((BufferedImage) spriteProvider.getImage(FEImageManager.PLAYER_DOWN_01), new Point(0, 0), new PlayerScreenLimitProvider(DEFAULT_WINDOW_X * 2, DEFAULT_WINDOW_Y * 2), spriteProvider);
         
     }
 
@@ -95,7 +95,7 @@ class Environment extends environment.Environment {
     
 //  </editor-fold>
 
-//  <editor-fold defaultstate="collapsed" desc="DrawingIntf">
+//  <editor-fold defaultstate="collapsed" desc="Paint">
     
     @Override
     public void paintEnvironment(Graphics g) {
@@ -125,7 +125,6 @@ class Environment extends environment.Environment {
         if (player != null) {
             player.draw(graphics);
         }
-        
     }
     
 //  </editor-fold>

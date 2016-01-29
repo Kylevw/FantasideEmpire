@@ -5,14 +5,10 @@
  */
 package fantasideempire;
 
-import java.awt.image.BufferedImage;
-
 /**
  *
- * @author Kyle van Wiltenburg
+ * @author Kyle
  */
-public interface SpriteProviderIntf {
-    
-    public BufferedImage getImage(String name);
-    
+public enum ActionStateE {
+    WALK_UP, WALK_DOWN, WALK_LEFT, WALK_RIGHT, STAND_UP, STAND_DOWN, STAND_LEFT, STAND_RIGHT, JUMP_UP, JUMP_DOWN, JUMP_LEFT, JUMP_RIGHT
 }
