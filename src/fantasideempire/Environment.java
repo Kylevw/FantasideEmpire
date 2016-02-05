@@ -5,7 +5,7 @@
  */
 package fantasideempire;
 
-import images.ResourceTools;
+import environment.Actor;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -14,6 +14,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Comparator;
 
 /**
  *
@@ -22,6 +24,7 @@ import java.awt.image.BufferedImage;
 class Environment extends environment.Environment {
     
     public Player player;
+    public Timmy timmy;
     
     public GameState gameState;
     
@@ -36,31 +39,26 @@ class Environment extends environment.Environment {
         
         gameState = GameState.ENVIRONMENT;
         spriteProvider = new FEImageManager();
-        player = new Player((BufferedImage) spriteProvider.getImage(FEImageManager.PLAYER_DOWN_01), new Point(0, 0), new PlayerScreenLimitProvider(DEFAULT_WINDOW_X * 2, DEFAULT_WINDOW_Y * 2), spriteProvider);
+        player = new Player((BufferedImage) spriteProvider.getImage(FEImageManager.PLAYER_DOWN), new Point(0, 0), new PlayerScreenLimitProvider(DEFAULT_WINDOW_X * 2, DEFAULT_WINDOW_Y * 2), spriteProvider);
         
     }
 
-//  <editor-fold defaultstate="collapsed" desc="Environment Initializer">
-    
     @Override
     public void initializeEnvironment() {
     }
-    
-//  </editor-fold>
 
-//  <editor-fold defaultstate="collapsed" desc="Task Handler">
-    
     @Override
     public void timerTaskHandler() {
         
         if (player != null) {
             player.timerTaskHandler();
         }
+        
+        if (timmy != null) {
+            timmy.timerTaskHandler();
+            if (timmy.hasDespawned()) timmy = null;
+        }
     }
-    
-//  </editor-fold>
-    
-//  <editor-fold defaultstate="collapsed" desc="Key Handler">
     
     @Override
     public void keyPressedHandler(KeyEvent e) {
@@ -72,6 +70,23 @@ class Environment extends environment.Environment {
             else if (e.getKeyCode() == KeyEvent.VK_LEFT && !player.getDirections().contains(Direction.LEFT)) player.addDirection(Direction.LEFT);
             else if (e.getKeyCode() == KeyEvent.VK_RIGHT && !player.getDirections().contains(Direction.RIGHT)) player.addDirection(Direction.RIGHT);
         }
+        
+        if (e.getKeyCode() == KeyEvent.VK_E) {
+            if (timmy != null) {
+                if (player != null) timmy.despawn(player.getPosition());
+                else timmy.despawn();
+            } else if (player != null) timmy = new Timmy(new Point(player.getPosition()), new Point(player.getPosition().x, player.getPosition().y + 40), spriteProvider);
+            else timmy = new Timmy(new Point(0, 0), spriteProvider);
+        }
+        
+        if (timmy != null) {
+            if (e.getKeyCode() == KeyEvent.VK_A) timmy.setDestination(new Point(timmy.getPosition().x - 100, timmy.getPosition().y));
+            if (e.getKeyCode() == KeyEvent.VK_D) timmy.setDestination(new Point(timmy.getPosition().x + 100, timmy.getPosition().y));
+            if (e.getKeyCode() == KeyEvent.VK_W) timmy.setDestination(new Point(timmy.getPosition().x, timmy.getPosition().y - 100));
+            if (e.getKeyCode() == KeyEvent.VK_S) timmy.setDestination(new Point(timmy.getPosition().x, timmy.getPosition().y + 100));
+            if (e.getKeyCode() == KeyEvent.VK_Q) timmy.setDestination(new Point(player.getPosition().x, player.getPosition().y));
+        }
+        
     }
 
     @Override
@@ -85,20 +100,23 @@ class Environment extends environment.Environment {
         }
     }
     
-//  </editor-fold>
-    
-//  <editor-fold defaultstate="collapsed" desc="Mouse Handler">
-    
     @Override
     public void environmentMouseClicked(MouseEvent e) {
     }
     
-//  </editor-fold>
-
-//  <editor-fold defaultstate="collapsed" desc="Paint">
-    
     @Override
     public void paintEnvironment(Graphics g) {
+        
+        ArrayList<Actor> actors = new ArrayList<>();
+        if (timmy != null) actors.add(timmy);
+        if (player != null) actors.add(player);
+        
+        actors.sort((Actor a1, Actor a2) -> {
+            final int y1 = a1.getPosition().y;
+            final int y2 = a2.getPosition().y;
+            return y1 < y2 ? -1 : y1 > y2 ? 1 : 0;
+        });
+        
         
         // Resizes the default window size to the current size of the JFrame
         AffineTransform atWindow;
@@ -110,23 +128,16 @@ class Environment extends environment.Environment {
         graphics.translate(DEFAULT_WINDOW_X - player.getEnvironmentPosition().x, DEFAULT_WINDOW_Y - player.getEnvironmentPosition().y);
         
         // Draws rectangles for debugging
-        graphics.setColor(Color.BLACK);
+        graphics.setColor(Color.LIGHT_GRAY);
         graphics.fillRect(-DEFAULT_WINDOW_X, -DEFAULT_WINDOW_Y, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
+        graphics.setColor(Color.BLACK);
+        graphics.drawRect(-DEFAULT_WINDOW_X, -DEFAULT_WINDOW_Y, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
         graphics.setColor(Color.WHITE);
         graphics.fillRect(0, 0, 1, 1);
         
-        // Draws example background image
-//        graphics.drawImage((BufferedImage) ResourceTools.loadImageFromResource("fantasideempire/beetlegrassedit.png"), -DEFAULT_WINDOW_WIDTH - 3, -DEFAULT_WINDOW_HEIGHT - 3, (DEFAULT_WINDOW_WIDTH * 2) + 6, (DEFAULT_WINDOW_HEIGHT * 2) + 6, this);
-        
-        // Centers the translation to draw the player
-        graphics.translate(player.getEnvironmentPosition().x - DEFAULT_WINDOW_X, player.getEnvironmentPosition().y - DEFAULT_WINDOW_Y);
-        
-        // Draws the player
-        if (player != null) {
-            player.draw(graphics);
-        }
+        actors.stream().forEach((actor) -> {
+            actor.draw(graphics);
+        });      
     }
-    
-//  </editor-fold>
     
 }

@@ -8,7 +8,6 @@ package fantasideempire;
 import environment.Actor;
 import environment.Velocity;
 import images.Animator;
-import images.ImageManager;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -22,8 +21,6 @@ import java.util.ArrayList;
  */
 public class Player extends Actor {
     
-//  <editor-fold defaultstate="collapsed" desc="Constructors">
-    
     {
         actionState = ActionStateE.STAND_DOWN;
     }
@@ -33,13 +30,13 @@ public class Player extends Actor {
     
     private final ArrayList<Direction> directions;
     private ActionStateE actionState;
-    private static final int WIDTH = 26;
-    private static final int HEIGHT = 60;
+    private static final int WIDTH = 28;
+    private static final int HEIGHT = 64;
     
     private final Point environmentPosition;
     private final Point displacementPosition;
     
-    private Animator animator;
+    private final Animator animator;
     
     /**
      * Constructor, returns an instance of the Player class
@@ -47,31 +44,27 @@ public class Player extends Actor {
      * @param image the current sprite of the entity
      * @param position the current position of the entity on screen
      * @param screenLimiter inputs the minimum and maximum positions for the camera
-     * @param spriteProvider the FEImageManager for the entity
+     * @param ip the FEImageManager for the entity
      * 
      */
     
-    public Player(BufferedImage image, Point position, ScreenLimitProviderIntf screenLimiter, ImageProviderIntf spriteProvider) {
+    public Player(BufferedImage image, Point position, ScreenLimitProviderIntf screenLimiter, ImageProviderIntf ip) {
 
         super(image, position, new Velocity(0, 0));
         this.directions = new ArrayList<>();
         this.environmentPosition = new Point(position);
         this.displacementPosition = new Point(0, 0);
         this.screenLimiter = screenLimiter;
-        this.ip = spriteProvider;
+        this.ip = ip;
         
         FEImageManager im = new FEImageManager();
-        this.animator = new Animator(im, spriteProvider.getImageList(FEImageManager.PLAYER_IDLE_LIST), 120);
+        this.animator = new Animator(im, ip.getImageList(FEImageManager.PLAYER_IDLE_LIST), 80);
     }
-    
-//  </editor-fold>
-    
-//  <editor-fold defaultstate="collapsed" desc="Task Handler">
     
     public void timerTaskHandler() {
         
         updateVelocity();
-        updateImage();
+//        updateImage();
 //        updateFacingDirection();
         applyVelocity();
         
@@ -136,36 +129,30 @@ public class Player extends Actor {
         
     }
     
-//  </editor-fold>
-    
-//  <editor-fold defaultstate="collapsed" desc="Paint">
-    
+    @Override
     public void draw(Graphics2D graphics) {
         
-        // Moves the player on the coordinates of the screen, not the world
-        graphics.translate(-environmentPosition.x + Environment.DEFAULT_WINDOW_X - (WIDTH / 2), -environmentPosition.y + Environment.DEFAULT_WINDOW_Y - (HEIGHT / 2));
+        
+        graphics.translate(-WIDTH / 2, -HEIGHT / 2);
         
         // Draws the player
-        graphics.drawImage(getImage(), getPosition().x, getPosition().y, null);
+        graphics.drawImage(getImage(), getPosition().x, getPosition().y, WIDTH, HEIGHT, null);
+        
+        graphics.translate(WIDTH / 2, HEIGHT / 2);
         
         // Translates images from coordinates of the player to coordinates of its drawing location
         // Used for objects such as the player's hitbox
-        graphics.translate(WIDTH / 2, HEIGHT / 2);
         
         graphics.setColor(Color.RED);
         
         // Outlines the hitbox of the player
-        graphics.draw(getObjectBoundary());
+//        graphics.draw(getObjectBoundary());
         
     }
     
-//  </editor-fold>
-    
-//  <editor-fold defaultstate="collapsed" desc="Properties">
-    
     @Override
     public Rectangle getObjectBoundary() {
-        return new Rectangle(getPosition().x - (WIDTH / 2), getPosition().y - (HEIGHT / 2), WIDTH, HEIGHT);
+        return new Rectangle(getPosition().x - (WIDTH / 2) + 3, getPosition().y - (HEIGHT / 2) + 4, WIDTH - 6, HEIGHT - 8);
     }
     
     public ArrayList<Direction> getDirections() {
@@ -195,7 +182,5 @@ public class Player extends Actor {
     public Point getDisplacementPosition() {
         return displacementPosition;
     }
-    
-//  </editor-fold>
     
 }
