@@ -1,4 +1,4 @@
-package fantasideempire;
+package fanticideempire;
 
 import environment.Actor;
 import environment.Velocity;

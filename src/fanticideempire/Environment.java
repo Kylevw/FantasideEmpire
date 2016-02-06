@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fantasideempire;
+package fanticideempire;
 
 import environment.Actor;
 import java.awt.Color;
@@ -15,7 +15,6 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Comparator;
 
 /**
  *
@@ -39,7 +38,7 @@ class Environment extends environment.Environment {
         
         gameState = GameState.ENVIRONMENT;
         spriteProvider = new FEImageManager();
-        player = new Player((BufferedImage) spriteProvider.getImage(FEImageManager.PLAYER_DOWN), new Point(0, 0), new PlayerScreenLimitProvider(DEFAULT_WINDOW_X * 2, DEFAULT_WINDOW_Y * 2), spriteProvider);
+        player = new Player((BufferedImage) spriteProvider.getImage(FEImageManager.PLAYER_DOWN), new Point(0, 0), new PlayerScreenLimitProvider(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT), spriteProvider);
         
     }
 
@@ -84,7 +83,7 @@ class Environment extends environment.Environment {
             if (e.getKeyCode() == KeyEvent.VK_D) timmy.setDestination(new Point(timmy.getPosition().x + 100, timmy.getPosition().y));
             if (e.getKeyCode() == KeyEvent.VK_W) timmy.setDestination(new Point(timmy.getPosition().x, timmy.getPosition().y - 100));
             if (e.getKeyCode() == KeyEvent.VK_S) timmy.setDestination(new Point(timmy.getPosition().x, timmy.getPosition().y + 100));
-            if (e.getKeyCode() == KeyEvent.VK_Q) timmy.setDestination(new Point(player.getPosition().x, player.getPosition().y));
+            if (e.getKeyCode() == KeyEvent.VK_Q) timmy.setDestination(new Point(player.getPosition()));
         }
         
     }
@@ -132,6 +131,9 @@ class Environment extends environment.Environment {
         graphics.fillRect(-DEFAULT_WINDOW_X, -DEFAULT_WINDOW_Y, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
         graphics.setColor(Color.BLACK);
         graphics.drawRect(-DEFAULT_WINDOW_X, -DEFAULT_WINDOW_Y, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
+        graphics.setColor(Color.RED);
+        graphics.drawRect(-DEFAULT_WINDOW_WIDTH + 3, -DEFAULT_WINDOW_HEIGHT + 1, DEFAULT_WINDOW_WIDTH * 2 - 6, DEFAULT_WINDOW_HEIGHT * 2 - 2);
+        graphics.drawRect(-DEFAULT_WINDOW_WIDTH + 4, -DEFAULT_WINDOW_HEIGHT + 2, DEFAULT_WINDOW_WIDTH * 2 - 8, DEFAULT_WINDOW_HEIGHT * 2 - 4);
         graphics.setColor(Color.WHITE);
         graphics.fillRect(0, 0, 1, 1);
         

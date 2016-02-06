@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fantasideempire;
+package fanticideempire;
 
 import images.ImageManager;
 import images.ResourceTools;
@@ -67,10 +67,10 @@ public class FEImageManager extends ImageManager implements ImageProviderIntf{
         
         imageListMap.put(PLAYER_IDLE_LIST, PLAYER_IDLE);     
         
-        imageMap.put(MISSING_TEXTURE, ResourceTools.loadImageFromResource("fantasideempire/resources/images/player/missing_texture.png"));
+        imageMap.put(MISSING_TEXTURE, ResourceTools.loadImageFromResource("fanticideempire/resources/images/player/missing_texture.png"));
         
-        BufferedImage playerSprites = (BufferedImage) ResourceTools.loadImageFromResource("fantasideempire/resources/images/player/player_spritesheet.png");
-        BufferedImage timmySprites = (BufferedImage) ResourceTools.loadImageFromResource("fantasideempire/resources/images/player/timmy_spritesheet.png");
+        BufferedImage playerSprites = (BufferedImage) ResourceTools.loadImageFromResource("fanticideempire/resources/images/player/player_spritesheet.png");
+        BufferedImage timmySprites = (BufferedImage) ResourceTools.loadImageFromResource("fanticideempire/resources/images/player/timmy_spritesheet.png");
         imageMap.put(PLAYER_UP, playerSprites.getSubimage(0, 0, 28, 64));
         imageMap.put(PLAYER_DOWN, playerSprites.getSubimage(0, 64, 28, 64));
         imageMap.put(PLAYER_WALK_DOWN_01, playerSprites.getSubimage(28, 64, 28, 64));

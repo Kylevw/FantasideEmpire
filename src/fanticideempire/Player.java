@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fantasideempire;
+package fanticideempire;
 
 import environment.Actor;
 import environment.Velocity;
@@ -146,7 +146,7 @@ public class Player extends Actor {
         graphics.setColor(Color.RED);
         
         // Outlines the hitbox of the player
-//        graphics.draw(getObjectBoundary());
+        graphics.draw(getObjectBoundary());
         
     }
     
