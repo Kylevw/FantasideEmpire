@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fanticideempire;
+package fanticideempire.java.universal.resources;
 
 /**
  *
  * @author Kyle van Wiltenburg
  */
-public enum Direction {
-    UP, DOWN, LEFT, RIGHT
+public enum GameState {
+    START_MENU, ENVIRONMENT, ARENA, PAUSE_MENU, SAVE_MENU
 }

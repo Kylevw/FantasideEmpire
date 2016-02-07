@@ -3,7 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fanticideempire;
+package fanticideempire.java.universal.main;
+
+import fanticideempire.java.environment.ScreenLimitProviderIntf;
 
 /**
  *

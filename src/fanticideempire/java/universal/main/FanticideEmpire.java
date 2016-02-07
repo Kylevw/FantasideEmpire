@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fanticideempire;
+package fanticideempire.java.universal.main;
 
 import environment.ApplicationStarter;
 import java.awt.Dimension;
@@ -15,7 +15,7 @@ import javax.swing.JFrame;
  *
  * @author Kyle van Wiltenburg
  */
-public class FantasideEmpire {
+public class FanticideEmpire {
 
     public static JFrame frame;
     
@@ -31,7 +31,7 @@ public class FantasideEmpire {
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         int width = gd.getDisplayMode().getWidth();
         int height = gd.getDisplayMode().getHeight();
-        frame = ApplicationStarter.run(new String[0], "The Fantaside Empire", new Dimension(width, height), new Environment());
+        frame = ApplicationStarter.run(new String[0], "The Fanticide Empire", new Dimension(width, height), new Environment());
     }
     
     public static Dimension getWindowSize() {

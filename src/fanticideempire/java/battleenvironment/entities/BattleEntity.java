@@ -1,7 +1,9 @@
-package fanticideempire;
+package fanticideempire.java.battleenvironment.entities;
 
+import fanticideempire.java.battleenvironment.Element;
 import environment.Actor;
 import environment.Velocity;
+import fanticideempire.java.battleenvironment.Element;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
