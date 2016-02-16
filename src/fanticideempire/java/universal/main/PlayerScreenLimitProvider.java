@@ -16,10 +16,10 @@ public class PlayerScreenLimitProvider implements ScreenLimitProviderIntf{
     private int minX, maxX, minY, maxY;
     
     public PlayerScreenLimitProvider(int width, int height){
-        this.minX = -width + Environment.DEFAULT_WINDOW_X;
-        this.maxX = width - Environment.DEFAULT_WINDOW_X;
-        this.minY = -height + Environment.DEFAULT_WINDOW_Y;
-        this.maxY = height - Environment.DEFAULT_WINDOW_Y;
+        this.minX = -width / 2;
+        this.maxX = width / 2;
+        this.minY = -height / 2;
+        this.maxY = height / 2;
     }
     
     @Override

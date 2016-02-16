@@ -57,18 +57,29 @@ public class Entity extends Actor{
         if (zDisplacement <= size.height / 3) shadow = ip.getImage(FEImageManager.ENTITY_SHADOW_BIG);
         else if (zDisplacement <= size.height * 2 / 3) shadow = ip.getImage(FEImageManager.ENTITY_SHADOW_MEDIUM);
         else if (zDisplacement <= size.height) shadow = ip.getImage(FEImageManager.ENTITY_SHADOW_SMALL);
+        else if (zDisplacement <= size.height * 1.5) shadow = ip.getImage(FEImageManager.ENTITY_SHADOW_TINY);
         
-        if (shadow != null) graphics.drawImage(shadow, getPosition().x - (getObjectBoundary().width / 2), getPosition().y + (size.height / 2) - (getObjectBoundary().width / 3), getObjectBoundary().width, (getObjectBoundary().width / 2), null);
-        graphics.drawImage(getImage(), getPosition().x - (size.width / 2), getPosition().y - (size.height / 2) - zDisplacement, size.width, size.height, null);
+        if (shadow != null) graphics.drawImage(shadow, getObjectGroundBoundary().x, getObjectGroundBoundary().y, getObjectGroundBoundary().width, getObjectGroundBoundary().height, null);
+        graphics.drawImage(getImage(), getPosition().x - (size.width / 2), getPosition().y - (size.height) - zDisplacement, size.width, size.height, null);
         if (drawBoundary) {
             graphics.setColor(Color.RED);
+            graphics.draw(getObjectGroundBoundary());
+            graphics.setColor(Color.BLUE);
             graphics.draw(getObjectBoundary());
         }
     }
     
     @Override
     public Rectangle getObjectBoundary() {
-        return new Rectangle(getPosition().x - (size.width / 2), getPosition().y - (size.height / 2) - zDisplacement, size.width, size.height);
+        return new Rectangle(getPosition().x - (size.width / 2),
+        getPosition().y - (size.height) - zDisplacement,
+        size.width, size.height);
+    }
+    
+    public Rectangle getObjectGroundBoundary() {
+        return new Rectangle(getObjectBoundary().x,
+        getObjectBoundary().y + getObjectBoundary().height - (getObjectBoundary().width / 4) + zDisplacement,
+        getObjectBoundary().width, getObjectBoundary().width / 2);
     }
     
     public void drawObjectBoundary(boolean drawBoundary) {
@@ -110,6 +121,12 @@ public class Entity extends Actor{
             zVelocity = 0;
         } else accelerateZVelocity(-1);
     }
+    
+    public boolean intersects(Entity entity) {
+        return getObjectBoundary().intersects(entity.getObjectBoundary()) &&
+        getObjectGroundBoundary().intersects(entity.getObjectGroundBoundary());
+    }
+    
     
     public void setImage(String image) {
         super.setImage(ip.getImage(image));

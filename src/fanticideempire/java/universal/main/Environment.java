@@ -11,6 +11,7 @@ import fanticideempire.java.universal.resources.FEImageManager;
 import fanticideempire.java.environment.entities.Player;
 import fanticideempire.java.environment.entities.Timmy;
 import fanticideempire.java.environment.entities.Entity;
+import grid.Grid;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -18,6 +19,7 @@ import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 /**
@@ -29,6 +31,12 @@ class Environment extends environment.Environment {
     public Player player;
     public Timmy timmy;
     
+    private int environmentTime;
+    
+    private static final int ENVIRONMENT_DAY_LENGTH = 24000;
+    
+    public final Grid environmentGrid;
+    
     public GameState gameState;
     
     public static final int DEFAULT_WINDOW_WIDTH = 336;
@@ -36,14 +44,34 @@ class Environment extends environment.Environment {
     public static final int DEFAULT_WINDOW_X = DEFAULT_WINDOW_WIDTH / 2;
     public static final int DEFAULT_WINDOW_Y = DEFAULT_WINDOW_HEIGHT / 2;
     
+    public static final int GRID_CELL_SIZE = 24;
+    
     FEImageManager im;
 
     public Environment() {
         
+//        environmentTime = 8900;
+        
         gameState = GameState.ENVIRONMENT;
         im = new FEImageManager();
-        player = new Player(new Point(0, 0), new PlayerScreenLimitProvider(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT), im);
         
+        environmentGrid = new Grid
+        (DEFAULT_WINDOW_WIDTH / GRID_CELL_SIZE, DEFAULT_WINDOW_HEIGHT / GRID_CELL_SIZE * 2, GRID_CELL_SIZE, GRID_CELL_SIZE / 2, new Point(-DEFAULT_WINDOW_X, -DEFAULT_WINDOW_Y), Color.BLACK);
+        
+        updateGrid(2, 2);
+        
+        player = new Player(new Point(0, 0), new PlayerScreenLimitProvider(environmentGrid.getGridSize().width - DEFAULT_WINDOW_WIDTH, environmentGrid.getGridSize().height - DEFAULT_WINDOW_HEIGHT), im);
+        
+    }
+    
+    private void updateGrid(double xScreens, double yScreens) {
+        if (xScreens < 1) xScreens = 1;
+        if (yScreens < 1) yScreens = 1;
+        int x = (int) (xScreens * DEFAULT_WINDOW_WIDTH);
+        int y = (int) (yScreens * DEFAULT_WINDOW_HEIGHT);
+        environmentGrid.setPosition(new Point(-(x / 2), -(y / 2)));
+        environmentGrid.setColumns(x / environmentGrid.getCellWidth());
+        environmentGrid.setRows(y / environmentGrid.getCellHeight());
     }
 
     @Override
@@ -55,12 +83,17 @@ class Environment extends environment.Environment {
         
         if (player != null) {
             player.timerTaskHandler();
+            if (timmy != null) System.out.println(player.intersects(timmy));
         }
         
         if (timmy != null) {
             timmy.timerTaskHandler();
             if (timmy.hasDespawned()) timmy = null;
         }
+        
+        environmentTime++;
+        if (environmentTime > ENVIRONMENT_DAY_LENGTH) environmentTime = 0;
+        
     }
     
     @Override
@@ -129,28 +162,93 @@ class Environment extends environment.Environment {
         atWindow = AffineTransform.getScaleInstance((double) FanticideEmpire.getWindowSize().width / DEFAULT_WINDOW_WIDTH, (double) FanticideEmpire.getWindowSize().height / DEFAULT_WINDOW_HEIGHT);
         if (atWindow != null) graphics.setTransform(atWindow);
         
-        int yTranslation = player.getEnvironmentPosition().y - player.getZDisplacement();
-        if (yTranslation < player.getScreenMinY() + 3) yTranslation = player.getScreenMinY() + 3;
+        int xTranslation = 0;
+        int yTranslation = 0;
+        
+        if (player != null) {
+            xTranslation = player.getPosition().x;
+            yTranslation = player.getPosition().y - player.getZDisplacement() - (player.getSize().height / 2);
+            if (xTranslation < player.getScreenMinX()) xTranslation = player.getScreenMinX();
+            else if (xTranslation > player.getScreenMaxX()) xTranslation = player.getScreenMaxX();
+            if (yTranslation < player.getScreenMinY()) yTranslation = player.getScreenMinY();
+            else if (yTranslation > player.getScreenMaxY()) yTranslation = player.getScreenMaxY();
+            xTranslation = DEFAULT_WINDOW_X - xTranslation;
+            yTranslation = DEFAULT_WINDOW_Y - yTranslation;
+        }
         
         // Translates all background images in reference to the player's current position
-        graphics.translate(DEFAULT_WINDOW_X - player.getEnvironmentPosition().x, DEFAULT_WINDOW_Y - yTranslation);
+        graphics.translate(xTranslation, yTranslation);
         
         // Draws rectangles for debugging
-        graphics.setColor(Color.LIGHT_GRAY);
-        graphics.fillRect(-DEFAULT_WINDOW_X, -DEFAULT_WINDOW_Y, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
-        graphics.setColor(Color.BLACK);
-        graphics.drawRect(-DEFAULT_WINDOW_X, -DEFAULT_WINDOW_Y, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
-        graphics.setColor(Color.RED);
-        graphics.drawRect(-DEFAULT_WINDOW_WIDTH + 3, -DEFAULT_WINDOW_HEIGHT + 3, DEFAULT_WINDOW_WIDTH * 2 - 6, DEFAULT_WINDOW_HEIGHT * 2 - 6);
-        graphics.drawRect(-DEFAULT_WINDOW_WIDTH + 4, -DEFAULT_WINDOW_HEIGHT + 4, DEFAULT_WINDOW_WIDTH * 2 - 8, DEFAULT_WINDOW_HEIGHT * 2 - 8);
-        graphics.setColor(Color.WHITE);
-        graphics.fillRect(0, 0, 1, 1);
+        if (environmentGrid != null) {
+            
+//            drawGridBase(graphics);
+            
+            fillGrid(graphics, im.getImage(FEImageManager.GRASS_TILE), xTranslation, yTranslation);
+            
+        }
         
-//        graphics.drawImage(im.getImage(FEImageManager.TEST_BACKGROUND), -DEFAULT_WINDOW_WIDTH, -DEFAULT_WINDOW_HEIGHT, DEFAULT_WINDOW_WIDTH * 2, DEFAULT_WINDOW_HEIGHT * 2, null);
+//        graphics.drawImage(im.getImage(FEImageManager.TEST_BACKGROUND), -environmentGrid.getGridSize().width / 2, -environmentGrid.getGridSize().height / 2, environmentGrid.getGridSize().width, environmentGrid.getGridSize().height, null);
         
         entities.stream().forEach((entity) -> {
             entity.draw(graphics);
         });      
+        
+        int environmentFactor = 0;
+        if (environmentTime >= ENVIRONMENT_DAY_LENGTH * 3 / 8) {
+            if (environmentTime >= ENVIRONMENT_DAY_LENGTH / 2 && environmentTime < ENVIRONMENT_DAY_LENGTH * 7 / 8) environmentFactor = 255;
+            else {
+                environmentFactor = environmentTime - (ENVIRONMENT_DAY_LENGTH * 3 / 8);
+                if (environmentTime > ENVIRONMENT_DAY_LENGTH / 2) environmentFactor = Math.abs(environmentFactor - (ENVIRONMENT_DAY_LENGTH * 5 / 8));
+                environmentFactor = environmentFactor * 255 * 8 / ENVIRONMENT_DAY_LENGTH;
+            }
+        }
+        
+        graphics.setColor(new Color(255 - environmentFactor, 128 - environmentFactor / 2, environmentFactor / 16, environmentFactor * 13 / 16));
+        if (environmentFactor > 0) graphics.fillRect(-xTranslation, -yTranslation, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
+    }
+    
+    public void drawGridBase(Graphics2D graphics) {
+        graphics.setColor(Color.LIGHT_GRAY);
+        graphics.fillRect(environmentGrid.getPosition().x + DEFAULT_WINDOW_X,
+        environmentGrid.getPosition().y + DEFAULT_WINDOW_Y,
+        environmentGrid.getGridSize().width - DEFAULT_WINDOW_WIDTH,
+        environmentGrid.getGridSize().height - DEFAULT_WINDOW_HEIGHT);
+        
+        graphics.setColor(Color.GRAY);
+        for (int i = 0; i < environmentGrid.getColumns(); i++) {
+            int x = (int) environmentGrid.getCellSystemCoordinate(i, 0).x;
+            graphics.fillRect(x, environmentGrid.getPosition().y, environmentGrid.getCellWidth(), environmentGrid.getCellHeight());
+            graphics.fillRect(x, environmentGrid.getPosition().y + environmentGrid.getGridSize().height - environmentGrid.getCellHeight(), environmentGrid.getCellWidth(), environmentGrid.getCellHeight());
+        }
+        
+        for (int i = 0; i < environmentGrid.getRows(); i++) {
+            int y = (int) environmentGrid.getCellSystemCoordinate(0, i).y;
+            graphics.fillRect(environmentGrid.getPosition().x, y, environmentGrid.getCellWidth(), environmentGrid.getCellHeight());
+            graphics.fillRect(environmentGrid.getPosition().x + environmentGrid.getGridSize().width - environmentGrid.getCellWidth(), y, environmentGrid.getCellWidth(), environmentGrid.getCellHeight());
+        }
+        
+        environmentGrid.paintComponent(graphics);
+    }
+    
+    public void fillGrid(Graphics2D graphics, BufferedImage image, int xTranslation, int yTranslation) {
+        for (int x = 0; x < environmentGrid.getColumns(); x++) {
+                for (int y = 0; y < environmentGrid.getRows(); y++) {
+                    
+                    Point gridPoint = new Point(environmentGrid.getCellSystemCoordinate(x, y));
+                    if (player != null &&
+                        gridPoint.x + environmentGrid.getCellWidth() >= -xTranslation &&
+                        gridPoint.x - DEFAULT_WINDOW_WIDTH <= -xTranslation &&
+                        gridPoint.y + environmentGrid.getCellHeight() >= -yTranslation &&
+                        gridPoint.y - DEFAULT_WINDOW_HEIGHT <= -yTranslation)
+                      
+                        graphics.drawImage(im.getImage(FEImageManager.GRASS_TILE),
+                        gridPoint.x, gridPoint.y,
+                        environmentGrid.getCellWidth(),
+                        environmentGrid.getCellHeight(), null);
+                    
+                }
+            }
     }
     
 }

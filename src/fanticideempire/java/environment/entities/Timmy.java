@@ -24,10 +24,6 @@ public class Timmy extends Entity{
         drawObjectBoundary(true);
     }
     
-    private static final int FLOAT_DISPLACEMENT = 4;
-    
-    private final int speed;
-    
     private Direction direction;
     
     private boolean despawn;
@@ -37,11 +33,13 @@ public class Timmy extends Entity{
     private boolean floatDirection;
     private final DurationTimer floatTimer = new DurationTimer(200);
     
+    private static final int FLY_SPEED = 5;
+    private static final int FLOAT_DISPLACEMENT = 4;
+    
     public Timmy(Point position, ImageProviderIntf ip) {
         super(ip.getImage(FEImageManager.TIMMY_DOWN), position, new Dimension(28, 56), ip);
         direction = Direction.DOWN;
         setImage(ip.getImage(FEImageManager.TIMMY_DOWN));
-        speed = 5;
     }
     
     public Timmy(Point startPosition, Point endPosition, ImageProviderIntf ip) {
@@ -49,7 +47,6 @@ public class Timmy extends Entity{
         direction = Direction.DOWN;
         this.destinationPos = endPosition;
         setImage(ip.getImage(FEImageManager.TIMMY_DOWN));
-        speed = 5;
     }
     
     @Override
@@ -70,7 +67,7 @@ public class Timmy extends Entity{
                 setPosition(destinationPos);
                 destinationPos = null;
             } else {
-                setVelocity(TrigonometryCalculator.calculateVelocity(getPosition(), destinationPos, speed));
+                setVelocity(TrigonometryCalculator.calculateVelocity(getPosition(), destinationPos, FLY_SPEED));
             }
         }
         
@@ -128,7 +125,7 @@ public class Timmy extends Entity{
     
     @Override
     public Rectangle getObjectBoundary() {
-        return new Rectangle(getPosition().x - (getSize().width / 2) + 6, getPosition().y - (getSize().height / 2) + 4 - getZDisplacement(), getSize().width - 12, getSize().height - 8);
+        return new Rectangle(getPosition().x - (getSize().width / 2) + 6, getPosition().y - getSize().height + 4 - getZDisplacement(), getSize().width - 12, getSize().height - 8);
     }
     
     public void setDestination(Point destinationPos) {

@@ -22,9 +22,12 @@ public class FEImageManager extends ImageManager implements ImageProviderIntf{
     
     public static final String TEST_BACKGROUND = "TEST_BACKGROUND";
     
+    public static final String GRASS_TILE = "GRASS_TILE";
+    
     public static final String ENTITY_SHADOW_BIG = "ENTITY_SHADOW_BIG";
     public static final String ENTITY_SHADOW_MEDIUM = "ENTITY_SHADOW_MEDIUM";
     public static final String ENTITY_SHADOW_SMALL = "ENTITY_SHADOW_SMALL";
+    public static final String ENTITY_SHADOW_TINY = "ENTITY_SHADOW_TINY";
     
     public static final String PLAYER_IDLE_UP_00 = "PLAYER_UP";
     public static final String PLAYER_IDLE_DOWN_00 = "PLAYER_DOWN";
@@ -136,6 +139,8 @@ public class FEImageManager extends ImageManager implements ImageProviderIntf{
         
         imageMap.put(TEST_BACKGROUND, ResourceTools.loadImageFromResource("fanticideempire/resources/images/utility/beetlegrassedit.png"));
         
+        imageMap.put(GRASS_TILE, ResourceTools.loadImageFromResource("fanticideempire/resources/images/utility/grass_tile.png"));
+        
         BufferedImage entityShadows = (BufferedImage) ResourceTools.loadImageFromResource("fanticideempire/resources/images/utility/shadow.png");
         
         BufferedImage playerSprites = (BufferedImage) ResourceTools.loadImageFromResource("fanticideempire/resources/images/player/player_spritesheet.png");
@@ -144,6 +149,7 @@ public class FEImageManager extends ImageManager implements ImageProviderIntf{
         imageMap.put(ENTITY_SHADOW_BIG, entityShadows.getSubimage(0, 0, 16, 8));
         imageMap.put(ENTITY_SHADOW_MEDIUM, entityShadows.getSubimage(0, 8, 16, 8));
         imageMap.put(ENTITY_SHADOW_SMALL, entityShadows.getSubimage(0, 16, 16, 8));
+        imageMap.put(ENTITY_SHADOW_TINY, entityShadows.getSubimage(0, 24, 16, 8));
         
         imageMap.put(PLAYER_IDLE_UP_00, playerSprites.getSubimage(0, 0, 28, 64));
         imageMap.put(PLAYER_IDLE_DOWN_00, playerSprites.getSubimage(0, 64, 28, 64));

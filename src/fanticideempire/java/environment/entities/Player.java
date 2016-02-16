@@ -12,7 +12,6 @@ import fanticideempire.java.universal.resources.ImageProviderIntf;
 import fanticideempire.java.environment.ScreenLimitProviderIntf;
 import images.Animator;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -36,9 +35,6 @@ public class Player extends Entity {
     private Direction facing;
     private ActionStateE actionState;
     private ActionStateE actionStateDebug;
-    
-    private static final int WIDTH = 28;
-    private static final int HEIGHT = 64;
     private static final int ANIMATION_SPEED = 80;
     
     private final Point environmentPosition;
@@ -62,6 +58,7 @@ public class Player extends Entity {
         this.environmentPosition = new Point(position);
         this.displacementPosition = new Point(0, 0);
         this.screenLimiter = screenLimiter;
+        screenLimiter.setMaxY(screenLimiter.getMaxY() + (getSize().height / 2));
         
         FEImageManager im = new FEImageManager();
         this.animator = new Animator(im, getImageProvider().getImageList(FEImageManager.PLAYER_WALK_DOWN_LIST), ANIMATION_SPEED);
@@ -211,7 +208,7 @@ public class Player extends Entity {
     
     @Override
     public Rectangle getObjectBoundary() {
-        return new Rectangle(getPosition().x - (WIDTH / 2) + 3, getPosition().y - (HEIGHT / 2) + 4, WIDTH - 6, HEIGHT - 8);
+        return new Rectangle(getPosition().x - (getSize().width / 2) + 3, getPosition().y - getSize().height + 4 - getZDisplacement(), getSize().width - 6, getSize().height - 8);
     }
     
     public ArrayList<Direction> getDirections() {
@@ -239,7 +236,7 @@ public class Player extends Entity {
     }
     
     public void Jump() {
-        setZVelocity(8);
+        if (onGround()) setZVelocity(7);
     }
     
     public int getScreenMinX() {
@@ -255,7 +252,7 @@ public class Player extends Entity {
     }
     
     public int getScreenMaxY() {
-        return screenLimiter.getMaxY();
+        return screenLimiter.getMaxY() - (getSize().height / 2);
     }
     
 }
